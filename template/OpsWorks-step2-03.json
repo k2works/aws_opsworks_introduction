@@ -12,7 +12,7 @@
           "Ref": "AWS::StackName"
         },
         "ServiceRoleArn": {
-          "Fn::GetAtt": [ "OpsWorksServiceRole", "Arn"]            
+          "Fn::GetAtt": [ "OpsWorksServiceRole", "Arn"]
         },
         "DefaultInstanceProfileArn": {
           "Fn::GetAtt": [ "OpsWorksInstanceProfile", "Arn"]
@@ -36,6 +36,25 @@
       }
     },
 
+    "myApp": {
+      "Type": "AWS::OpsWorks::App",
+      "Properties": {
+        "StackId": {
+          "Ref": "myStack"
+        },
+        "Name": "SimplePHPApp",
+        "Type": "php",
+        "AppSource": {
+          "Type": "git",
+          "Url": "git://github.com/amazonwebservices/opsworks-demo-php-simple-app.git",
+          "Revision": "version1"
+        },
+        "Attributes": {
+          "DocumentRoot": " "
+        }
+      }
+    },
+
     "myInstance1": {
       "Type": "AWS::OpsWorks::Instance",
       "Properties": {
@@ -48,40 +67,6 @@
           }
         ],
         "InstanceType": "m1.small"
-      }
-    },
-
-    "myInstance2": {
-      "Type": "AWS::OpsWorks::Instance",
-      "Properties": {
-        "StackId": {
-          "Ref": "myStack"
-        },
-        "LayerIds": [
-          {
-            "Ref": "myLayer"
-          }
-        ],
-        "InstanceType": "m1.small"
-      }
-    },
-
-    "myApp": {
-      "Type": "AWS::OpsWorks::App",
-      "Properties": {
-        "StackId": {
-          "Ref": "myStack"
-        },
-        "Name": "MyPHPApp",
-        "Type": "php",
-        "AppSource": {
-          "Type": "git",
-          "Url": "git://github.com/amazonwebservices/opsworks-demo-php-simple-app.git",
-          "Revision": "version1"
-        },
-        "Attributes": {
-          "DocumentRoot": " "
-        }
       }
     },
 
