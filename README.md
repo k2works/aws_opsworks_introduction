@@ -276,6 +276,8 @@ _template/OpsWorks-step3-04.json_
 
 [PHPのサンプルアプリVersion2が動かない](https://github.com/k2works/aws_opsworks_introduction/issues/1)
 
+### スタックをスケールアウトする
+
 # 参照
 
 * [AWS OpsWorks](http://docs.aws.amazon.com/opsworks/latest/userguide/welcome.html)
