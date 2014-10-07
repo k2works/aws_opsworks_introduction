@@ -69,7 +69,7 @@
       "Metadata" : {
         "Comment" : "OpsWorks instances require outbound Internet access. Using DependsOn to make sure outbound Internet Access is estlablished before creating instances in this layer."
       },
-      "DependsOn": [ "NATIPAddress", "PublicRoute", "PublicSubnetRouteTableAssociation", "PrivateRoute", "PrivateSubnetRouteTableAssociation", "OpsWorksApp"],
+      "DependsOn": [ "NATIPAddress", "PublicRoute", "PublicSubnetRouteTableAssociation", "PrivateRoute", "PrivateSubnetRouteTableAssociation"],
       "Properties": {
         "StackId": {
           "Ref": "OpsWorksStack"
@@ -85,52 +85,6 @@
             "Ref": "OpsWorksSecurityGroup"
           }
         ]
-      }
-    },
-    "OpsWorksInstance1": {
-      "Type": "AWS::OpsWorks::Instance",
-      "Properties": {
-        "StackId": {
-          "Ref": "OpsWorksStack"
-        },
-        "LayerIds": [
-          {
-            "Ref": "OpsWorksLayer"
-          }
-        ],
-        "InstanceType": "m1.small"
-      }
-    },
-    "OpsWorksInstance2": {
-      "Type": "AWS::OpsWorks::Instance",
-      "Properties": {
-        "StackId": {
-          "Ref": "OpsWorksStack"
-        },
-        "LayerIds": [
-          {
-            "Ref": "OpsWorksLayer"
-          }
-        ],
-        "InstanceType": "m1.small"
-      }
-    },
-    "OpsWorksApp": {
-      "Type": "AWS::OpsWorks::App",
-      "Properties": {
-        "StackId": {
-          "Ref": "OpsWorksStack"
-        },
-        "Name": "MyPHPApp",
-        "Type": "php",
-        "AppSource": {
-          "Type": "git",
-          "Url": "git://github.com/amazonwebservices/opsworks-demo-php-simple-app.git",
-          "Revision": "version1"
-        },
-        "Attributes": {
-          "DocumentRoot": " "
-        }
       }
     },
     "OpsWorksServiceRole": {
@@ -327,6 +281,7 @@
             "CIDR"
           ]
         },
+        "AvailabilityZone" : "ap-northeast-1a",
         "Tags": [
           {
             "Key": "Application",
@@ -542,6 +497,7 @@
             "CIDR"
           ]
         },
+        "AvailabilityZone" : "ap-northeast-1c",
         "Tags": [
           {
             "Key": "Application",
@@ -757,11 +713,6 @@
     "StackId": {
       "Value": {
         "Ref": "OpsWorksStack"
-      }
-    },
-    "AppId": {
-      "Value": {
-        "Ref": "OpsWorksApp"
       }
     },
     "VPC": {
