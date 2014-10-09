@@ -591,14 +591,8 @@ _template/OpsWorks-step5-02.json_
       "SecurityGroupIngress": [
       {
         "IpProtocol": "tcp",
-        "FromPort": "22",
-        "ToPort": "22",
-        "CidrIp": "0.0.0.0/0"
-      },
-      {
-        "IpProtocol": "tcp",
-        "FromPort": "80",
-        "ToPort": "80",
+        "FromPort": "3306",
+        "ToPort": "3306",
         "CidrIp": "0.0.0.0/0"
       },
       {
@@ -643,7 +637,7 @@ _template/OpsWorks-step5-03.json_
   "Metadata" : {
     "Comment" : "OpsWorks instances require outbound Internet access. Using DependsOn to make sure outbound Internet Access is estlablished before creating instances in this layer."
   },
-  "DependsOn": [ "NATIPAddress", "PublicRoute", "PublicSubnetRouteTableAssociation", "PrivateRoute", "PrivateSubnetRouteTableAssociation"],
+  "DependsOn": [ "PublicRoute", "PublicSubnetRouteTableAssociation", "PrivateSubnetRouteTableAssociation"],
   "Properties": {
     "StackId": {
       "Ref": "OpsWorksStack"
@@ -690,10 +684,94 @@ _template/OpsWorks-step5-03.json_
         "Ref": "OpsWorksLayer"
       }
     ],
-    "InstanceType": "m1.small"
+    "InstanceType": "m1.small",
+    "SubnetId" : {
+      "Ref": "PublicSubnet"
+    }
   }
 },
 ```
+
+### VPC内でRDSに接続できるか確認
+
+![007](https://farm3.staticflickr.com/2945/15298615418_50c9d4d4dd.jpg)
+
+![008](https://farm6.staticflickr.com/5616/15485268145_b6d4b89b49.jpg)
+
+![009](https://farm4.staticflickr.com/3929/15482123691_b36f97d710.jpg)
+
+```bash
+$ ssh -i my-key.pem ec2-user@54.64.44.45
+$ mysql -h am1n7ngscv4mg6x.ccebcwxdebti.ap-northeast-1.rds.amazonaws.com -uadmin -ppassword
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 27
+Server version: 5.5.37-log Source distribution
+
+Copyright (c) 2000, 2014, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+```
+
+### OpsWorksからRDSにアクセスできるようにする
+
+_template/OpsWorks-step5-03.json_
+
+```json
+"OpsWorksServiceRole": {
+  "Type": "AWS::IAM::Role",
+  "Properties": {
+    "AssumeRolePolicyDocument": {
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "Service": [
+              "opsworks.amazonaws.com"
+            ]
+          },
+          "Action": [
+            "sts:AssumeRole"
+          ]
+        }
+      ]
+    },
+    "Path": "/",
+    "Policies": [
+      {
+        "PolicyName": "opsworks-service",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ec2:*",
+                "iam:PassRole",
+                "cloudwatch:GetMetricStatistics",
+                "elasticloadbalancing:*",
+                "rds:*"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      }
+    ]
+  }
+```
+
+![010](https://farm3.staticflickr.com/2945/15298361829_86a9aabc24.jpg)
+
+![011](https://farm6.staticflickr.com/5600/15298615338_a7734fe0a9.jpg)
+
+![012](https://farm4.staticflickr.com/3939/15298693497_13ba958dee.jpg)
+
+![013](https://farm3.staticflickr.com/2945/15298693487_e193931a8c.jpg)
 
 # 参照
 
